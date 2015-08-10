@@ -83,16 +83,16 @@ def updating_writer(a):
             drums[0] = drums[0] - 1
     if pumps[1] == True:
         if drums[2] > 0:
-            drums[1] = drums[1] + 1
+            drums[0] = drums[0] + 1
             drums[2] = drums[2] - 1
     if pumps[2] == True:
         if drums[3] > 0:
             drums[2] = drums[2] + 1
-        drums[3] = drums[3] - 1
-    if pumps[3] == True:
+            drums[3] = drums[3] - 1
+    if pumps[1] == True:
         if drums[0] > 0:
             drums[3] = drums[3] + 1
-            drums[0] = drums[0] - 1
+            drums[1] = drums[1] - 1
 
     for i in range(0,4):
         if drums[i] >= 100:

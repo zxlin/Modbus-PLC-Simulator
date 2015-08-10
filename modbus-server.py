@@ -89,7 +89,7 @@ def updating_writer(a):
         if drums[3] > 0:
             drums[2] = drums[2] + 1
             drums[3] = drums[3] - 1
-    if pumps[1] == True:
+    if pumps[3] == True:
         if drums[0] > 0:
             drums[3] = drums[3] + 1
             drums[1] = drums[1] - 1

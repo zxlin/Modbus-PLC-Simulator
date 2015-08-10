@@ -20,12 +20,16 @@ from twisted.internet.task import LoopingCall
 import sys
 import logging
 import logging.handlers
+import socket
 
 #---------------------------------------------------------------------------# 
 # configure server parameters
 #---------------------------------------------------------------------------# 
 
-server_address = "172.31.1.242" # Make sure your box can bind to this IP
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.connect(("www.google.com", 80))
+
+server_address = s.getsockname()[0] # Make sure your box can bind to this IP
 server_port = 502 # default port for Modbus is 502
 
 if len(sys.argv) == 3: # set server params if given cmd line args
@@ -74,9 +78,9 @@ def updating_writer(a):
         drums[0] = drums[0] - 2
 
     if pumps[0] == True:
-        if drums[1] > 0:
-            drums[0] = drums[0] + 1
-            drums[1] = drums[1] - 1
+        if drums[0] > 0:
+            drums[1] = drums[1] + 1
+            drums[0] = drums[0] - 1
     if pumps[1] == True:
         if drums[2] > 0:
             drums[1] = drums[1] + 1

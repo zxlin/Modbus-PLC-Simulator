@@ -41,10 +41,12 @@ if len(sys.argv) == 3: # set server params if given cmd line args
 #---------------------------------------------------------------------------# 
 logging.basicConfig()
 log = logging.getLogger()
-log.setLevel(logging.DEBUG)
+log.setLevel(logging.INFO)
 
 # Add syslog handler 
-handler = logging.handlers.SysLogHandler('/dev/log')
+handler = logging.handlers.SysLogHandler(address=('10.32.6.55', 514))
+formatter = logging.Formatter('CEF:0%(message)s')
+handler.setFormatter(formatter)
 log.addHandler(handler)
 
 
@@ -101,11 +103,30 @@ def updating_writer(a):
             drums[i] = 0
 
 
-    log.debug("drums: " + str(drums));
-    log.debug("pumps: " + str(pumps));
-    log.debug("valves: " + str(valves));
     context[slave_id].setValues(holdingRegister, drumsAddress, drums)
    
+
+def logToArcSight(a):
+    context = a[0]
+    slave_id = 0x00
+    holdingRegister = 3
+    coil = 1
+    
+    # access holding registers addr 0 - 3 = drums 1 - 4 in lab 6
+    drumsAddress = 0x0
+    drums = context[slave_id].getValues(holdingRegister, drumsAddress, count=4)
+    # access coils addr 0 - 3 = pumps 1 - 4 in lab6
+    pumpsAddress = 0x0
+    pumps = context[slave_id].getValues(coil, pumpsAddress, count=4)
+
+    # access coils addr 10 - 11 = input and output valves respectively
+    valvesAddress = 0x0a # dec 10 = hex 0x0a
+    valves = context[slave_id].getValues(coil, valvesAddress, count=2)
+
+    log.info("|PLC-SIM|pyModbus|1.0.0.0|INFO|Drums: " + str(drums)+ "|2|app=Modbus/TCP cs1Label=Status cs1=Test");
+    log.info("|PLC-SIM|pyModbus|1.0.0.0|INFO|Pumps: " + str(pumps)+ "|2|app=Modbus/TCP");
+    log.info("|PLC-SIM|pyModbus|1.0.0.0|INFO|Valves: " + str(valves)+ "|2|app=Modbus/TCP");
+
     
 
 #---------------------------------------------------------------------------# 
@@ -135,7 +156,9 @@ identity.MajorMinorRevision = '1.0'
 #---------------------------------------------------------------------------# 
 # Start running the server
 #---------------------------------------------------------------------------#
-time = 1
-loop = LoopingCall(f=updating_writer, a=(context,))
-loop.start(time, now=True)
+time = 3
+loop = LoopingCall(f=logToArcSight, a=(context,))
+loop1 = LoopingCall(f=updating_writer, a=(context,))
+loop.start(30, now=True)
+loop1.start(time, now=True)
 StartTcpServer(context, identity=identity, address=(server_address, server_port))

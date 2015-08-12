@@ -123,9 +123,23 @@ def logToArcSight(a):
     valvesAddress = 0x0a # dec 10 = hex 0x0a
     valves = context[slave_id].getValues(coil, valvesAddress, count=2)
 
-    log.info("|PLC-SIM|pyModbus|1.0.0.0|INFO|Drums: " + str(drums)+ "|2|app=Modbus/TCP cs1Label=Status cs1=Test");
-    log.info("|PLC-SIM|pyModbus|1.0.0.0|INFO|Pumps: " + str(pumps)+ "|2|app=Modbus/TCP");
-    log.info("|PLC-SIM|pyModbus|1.0.0.0|INFO|Valves: " + str(valves)+ "|2|app=Modbus/TCP");
+    for i in range(0,4):
+        log.info("|PLC-SIM|pyModbus|1.0.0.0|INFO|INFO: PLC Status Update|2|app=Modbus/TCP cs1Label=Drum_" + str(i+1) + "_Level cs1=" + str(drums[i]))
+        if pumps[i]:
+            pumps[i] = 'On'
+        else:
+            pumps[i] = 'Off'
+        log.info("|PLC-SIM|pyModbus|1.0.0.0|INFO|INFO: PLC Status Update|2|app=Modbus/TCP cs1Label=Pump_" + str(i+1) + "_State cs1=" + pumps[i])
+
+    for i in range(0,2):
+        if valves[i]:
+            valves[i] = 'On'
+        else:
+            valves[i] = 'Off'
+
+    log.info("|PLC-SIM|pyModbus|1.0.0.0|INFO|INFO: PLC Status Update|2|app=Modbus/TCP cs1Label=Input_Valve_State cs1=" + valves[0])
+    log.info("|PLC-SIM|pyModbus|1.0.0.0|INFO|INFO: PLC Status Update|2|app=Modbus/TCP cs1Label=Output_Valve_State cs1=" + valves[1])
+
 
     
 

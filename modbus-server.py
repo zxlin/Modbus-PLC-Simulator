@@ -124,7 +124,7 @@ def logToArcSight(a):
     valves = context[slave_id].getValues(coil, valvesAddress, count=2)
 
     for i in range(0,4):
-        log.info("|PLC-SIM|pyModbus|1.0.0.0|INFO|INFO: PLC Status Update|2|app=Modbus/TCP cs1Label=Drum_" + str(i+1) + "_Level cs1=" + str(drums[i]))
+        log.info("|PLC-SIM|pyModbus|1.0.0.0|INFO|INFO: PLC Status Update|2|app=Modbus/TCP cs1Label=Drum_" + str(i+1) + "_Level cn1=" + str(drums[i]))
         if pumps[i]:
             pumps[i] = 'On'
         else:
